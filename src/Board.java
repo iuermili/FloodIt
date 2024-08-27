@@ -1,10 +1,5 @@
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.lang.reflect.Method;
 
 /**
@@ -251,10 +246,43 @@ public class Board {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        // if the memory references are equal,
+        // then the objects are same hence return true.
+        if (this == obj) {
+            return true;
+        }
+        // if the second object is null, but the first
+        // object is not null, return false.
+        if (obj == null) {
+            return false;
+        }
+        // if the class type of these two objects are not equal,
+        // return false.
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Board that = (Board) obj;
+        if (this.size != that.size) {
+            return false;
+        }
+        for (int i = 0; i != size; ++ i) {
+            for (int j = 0; j != size; ++ j) {
+                if (! this.tiles[i][j].equals(that.tiles[i][j]))
+                    return false;
+            }
+        }
+        boolean[][] this_flooded = new boolean[size][size];
+        boolean[][] that_flooded = new boolean[size][size];
+        for (Coord c : this.flooded) {
+            this_flooded[c.getY()][c.getX()] = true;
+        }
+        for (Coord c : that.flooded) {
+            that_flooded[c.getY()][c.getX()] = true;
+        }
+
+       return Arrays.deepEquals(this_flooded, that_flooded);
+    }
 }
-
-
-
-
-
-
