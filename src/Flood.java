@@ -5,7 +5,7 @@ import java.util.*;
 
 public class Flood {
 
-    // the time complexity of the flood() function is O(n²)
+    // the time complexity of the flood() function is O(n^2)
     public static void flood(WaterColor color,
                              LinkedList<Coord> flooded_list,
                              Tile[][] tiles,
