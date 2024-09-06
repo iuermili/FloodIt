@@ -2,6 +2,7 @@
   <configuration default="false" name="FloodIt - Interactive" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="Game" />
     <module name="FloodIt" />
+    <option name="PROGRAM_PARAMETERS" value="&quot;timing&quot;" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
