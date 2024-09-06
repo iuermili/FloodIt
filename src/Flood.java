@@ -11,7 +11,6 @@ public class Flood {
                               LinkedList<Coord> flooded_list,
                               Tile[][] tiles,
                               Integer board_size) {
-        // YOUR CODE
     }
 
     // An alternative implementation goes here.
