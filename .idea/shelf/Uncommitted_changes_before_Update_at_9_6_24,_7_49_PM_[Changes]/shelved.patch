@@ -1,0 +1,116 @@
+Index: src/Flood.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Imports for the parameters of flood\nimport java.lang.reflect.Array;\nimport java.util.*;\n\n\npublic class Flood {\n    public static void flood(WaterColor color,\n                              LinkedList<Coord> flooded_list,\n                              Tile[][] tiles,\n                              Integer board_size) {\n        Stack<Coord> stack = new Stack<>(); // initialize stack with flooded coordinates\n        for (Coord coord : flooded_list) {\n            stack.push(coord);\n        }\n\n        while (!stack.isEmpty()) {\n            Coord current = stack.pop(); // pop coord\n            List<Coord> neighbors = current.neighbors(board_size); // neighbors of current tile\n\n            // process each neighbor\n            for (Coord neighbor : neighbors) {\n                // neighbor is not flooded and has same color (O(n) lookup time)\n                if (!flooded_list.contains(neighbor) &&\n                        tiles[neighbor.getY()][neighbor.getX()].getColor() == color) {\n\n                    // mark neighbor as flooded\n                    stack.push(neighbor); // push, to later check its neighbors\n                    flooded_list.add(neighbor); // update original flooded list\n                }\n            }\n        }\n    }\n\n    public static void flood1(WaterColor color,\n                             LinkedList<Coord> flooded_list,\n                             Tile[][] tiles,\n                             Integer board_size) {\n        // initialize set with flooded coordinates for O(1) lookup time\n        Set<Coord> floodedSet = new HashSet<>(flooded_list);\n        Stack<Coord> stack = new Stack<>(); // initialize stack with flooded coordinates\n        for (Coord coord : flooded_list) {\n            stack.push(coord);\n        }\n\n        while (!stack.isEmpty()) {\n            Coord current = stack.pop(); // pop coord\n            List<Coord> neighbors = current.neighbors(board_size); // neighbors of current tile\n\n            // process each neighbor\n            for (Coord neighbor : neighbors) {\n                // neighbor is not flooded and has same color (0(1) operation)\n                if (!floodedSet.contains(neighbor) &&\n                        tiles[neighbor.getY()][neighbor.getX()].getColor() == color) {\n\n                    // mark neighbor as flooded\n                    stack.push(neighbor); // push, to later check its neighbors\n                    flooded_list.add(neighbor); // update original flooded list\n                    floodedSet.add(neighbor); // sync the set with the flooded list\n                }\n            }\n        }\n    }\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Flood.java b/src/Flood.java
+--- a/src/Flood.java	(revision 8ac145a916bc68a01cd151f74dfef402d6c0e21a)
++++ b/src/Flood.java	(date 1725664091462)
+@@ -4,56 +4,55 @@
+ 
+ 
+ public class Flood {
++    // the time complexity of the flood() function is O(n^2)
+     public static void flood(WaterColor color,
+                               LinkedList<Coord> flooded_list,
+                               Tile[][] tiles,
+                               Integer board_size) {
+-        Stack<Coord> stack = new Stack<>(); // initialize stack with flooded coordinates
+-        for (Coord coord : flooded_list) {
+-            stack.push(coord);
+-        }
++        // initialize a copy of flooded_list to check all possible neighbors
++        // without negatively impacting the game logic
++        LinkedList<Coord> coordsToCheck = new LinkedList<>(flooded_list);
+ 
+-        while (!stack.isEmpty()) {
+-            Coord current = stack.pop(); // pop coord
++        while (!coordsToCheck.isEmpty()) {
++            Coord current = coordsToCheck.removeFirst(); // pop first coordinate
+             List<Coord> neighbors = current.neighbors(board_size); // neighbors of current tile
+ 
+             // process each neighbor
+             for (Coord neighbor : neighbors) {
+-                // neighbor is not flooded and has same color (O(n) lookup time)
++                // neighbor is not flooded (O(n)) and has the same color as the user's input (0(1))
+                 if (!flooded_list.contains(neighbor) &&
+                         tiles[neighbor.getY()][neighbor.getX()].getColor() == color) {
+-
+                     // mark neighbor as flooded
+-                    stack.push(neighbor); // push, to later check its neighbors
++                    coordsToCheck.add(neighbor); // add, to later check the neighbor's neighbors
+                     flooded_list.add(neighbor); // update original flooded list
+                 }
+             }
+         }
+     }
+ 
++    // the time complexity of the flood1() function is O(n)
+     public static void flood1(WaterColor color,
+                              LinkedList<Coord> flooded_list,
+                              Tile[][] tiles,
+                              Integer board_size) {
+         // initialize set with flooded coordinates for O(1) lookup time
+         Set<Coord> floodedSet = new HashSet<>(flooded_list);
+-        Stack<Coord> stack = new Stack<>(); // initialize stack with flooded coordinates
+-        for (Coord coord : flooded_list) {
+-            stack.push(coord);
+-        }
++        // initialize a copy of flooded_list to check all possible neighbors
++        // without negatively impacting the game logic
++        LinkedList<Coord> coordsToCheck = new LinkedList<>(flooded_list);
+ 
+-        while (!stack.isEmpty()) {
+-            Coord current = stack.pop(); // pop coord
+-            List<Coord> neighbors = current.neighbors(board_size); // neighbors of current tile
++        // while there are still coordinates to check
++        while (!coordsToCheck.isEmpty()) {
++            Coord current = coordsToCheck.removeFirst(); // pop first coordinate
++            List<Coord> neighbors = current.neighbors(board_size); // neighbors of current coordinate
+ 
+             // process each neighbor
+             for (Coord neighbor : neighbors) {
+-                // neighbor is not flooded and has same color (0(1) operation)
++                // neighbor is not flooded (0(1)) and has the same color as the user's input (0(1))
+                 if (!floodedSet.contains(neighbor) &&
+                         tiles[neighbor.getY()][neighbor.getX()].getColor() == color) {
+-
+                     // mark neighbor as flooded
+-                    stack.push(neighbor); // push, to later check its neighbors
++                    coordsToCheck.add(neighbor); // add, to later check the neighbor's neighbors
+                     flooded_list.add(neighbor); // update original flooded list
+                     floodedSet.add(neighbor); // sync the set with the flooded list
+                 }
+Index: README.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/README.md b/README.md
+new file mode 100644
+--- /dev/null	(date 1725666586798)
++++ b/README.md	(date 1725666586798)
+@@ -0,0 +1,20 @@
++Group members: Sarvesh Satish, Christine Chen, Lincoln Firks, Eric Li, Dhruv Chavan
++
++[Question 1] What function roughly fits that graph?
++The function f(n) = n² fits the graph.
++
++[Question 2] What is the time complexity of your flood() function based on analyzing its code? Answer the question in your write-up and write the complexity as a line of comment in your code above the function.
++In the flood() function, we start by initializing a new linked list, named coordsToCheck, with the elements of the flooded_list. In order to copy over the elements to coordsToCheck, flooded_list was likely iterated through, which means this operation’s time complexity is O(n). Then, for each element (coord) in coordsToCheck, we iterated through the flooded_list to ensure that we would not be adding a duplicate coordinate to flooded_list while flooding neighbors. Because we iterated through the entire flooded_list for each element in coordsToCheck, this operation’s time complexity is O(n²). By combining the time complexities of both operations, we end with O(n) + O(n²), which reduces down to O(n²). Therefore, the time complexity of the flood() function is O(n²).
++
++[Question 3] Does your analysis match up with what you see in the graph?
++The graph that represents the flood() function’s time complexity roughly resembles a quadratic function (f(n) = n²). This indicates that the flood() function does have a time complexity of O(n²), the conclusion we arrived at in our code analysis.
++
++[Question 4] What data structures did you use (linked lists, arrays…) ? Is the time complexity of your flood function the best it can be or can you do better? Why?
++Our original implementation for the flood() function utilized one additional linked list.
++
++The time complexity of our implementation is definitely not the best we can do. We know that because whenever we perform a search through a linked list in our code (which we do n times) we have to iterate through n elements. However, through employing a data structure that is more appropriate for search operations, we can resolve this issue.
++
++[Question 5] What is the time complexity of your alternative implementation? Comment the function with its time complexity in your code and write down the time complexity in your write-up.
++Our alternative implementation for the flood1() function utilized an extra linked list and a hash set. The hash set enabled us to make the previous O(n) search operations on the flooded_list into O(1), constant time, operations.
++
++We believe that the time complexity of our alternative implementation, which is O(n), is the best that we can do because we have to iterate through all the elements in the flooded_list (O(n) operation) no matter what to correctly implement the flood() function.
+\ No newline at end of file
